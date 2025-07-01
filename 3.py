@@ -13,5 +13,3 @@ img = cv2.imread('pythonLogo.png')
 
 cv2.putText(img,'Hay !!',(100,150),cv2.FONT_HERSHEY_PLAIN,2,(255,0,0),2)
 cv2.imshow ('image',img)
-cv2.waitKey(0)
-cv2.destoryAllWindow()

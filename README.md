@@ -145,10 +145,79 @@ cv2.putText(img,'Hay !!',(100,150),cv2.FONT_HERSHEY_PLAIN,2,(255,0,0),5)
   5 = ความหนา (thickness)
 
 
-# Template Matching (ตรวจจับเหรียญในภาพ)
+# Template Matching (ตรวจจับเหรียญในภาพ) อยู่ใน 4.py
 หลักการคือ แบ่งภาพ Original เป็นส่วนๆ แล้วเอาภาพ Template ไปเทียบ
 
 การคำนวน อยู่ในไฟล์ compare_photo.png (มีหลายMode ให้เลือกใช้)
+
+template = cv2.imread('1baht.jpg') 
+  ภาพที่ต้องการเปรียบเทียบ
+
+
+h, w, _ = template.shape
+
+เก็บตัวแปร high width
+ถ้า template.shape คือ (300, 400, 3):
+h = 300
+w = 400
+3 ถูกเก็บใน _ เพราะคุณ ไม่ต้องการใช้มัน
+
+
+
+res = cv2.matchTemplate(img, template,cv2.TMCCOEFF_NORMED)
+
+res ย่อมาจาก resource
+img = ภาพ original 
+template = ภาพที่ต้องการเปรียบเทียบ
+cv2.TMCCOEFF_NORMED = วิธีที่ใช้ เลือกได้จาก compare_photo.png(มีหลายMode ให้เลือกใช้)
+
+
+
+
+min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+
+  ฟังชั่น minMaxLoc ดึงว่า จากres แล้วassign ให้คนอื่น
+
+
+top_left = max_loc 
+bottom_right = (top_left[0]+ w, top_left[1] + h)
+
+  asignค่า แล้วนำไปใช้ตีกรอบ
+
+
+cv2.rectangle(img, top_left,bottom_right,(0,255,255),3)
+  วาดรูปสี่เหลี่ยมปกติ
+
+
+# Detect object with Contour (ตรวจจับวัตถุด้วย Contour)
+    web รวบรวมเกี่ยวกับ image processing 
+    pyimagesearch.com
+
+  
+  ติดตั้ง Library นี้เพิ่ม
+sudo apt install imutils
+
+
+//ทำPre processing (แปลงรูปเป็นขาดำ  ใส่เบลอ )
+
+gray = cv2.cvtColar(image,cv2.COLOR_BGR2GRAY)
+  gray ตัวแปรที่แปลงเป็นสีเทา ขาวดำ
+
+blurred = cv2.GaussianBlur(gray,(5,5),0)
+  ใส่ฟิวเตอร์เบลอให้รูป
+  gray = ภาพต้นฉบับ
+  (5,5) = ขนาดของ kernel (หน้าต่าง) ที่ใช้ในการเบลอ (5, 5) หมายถึงใช้หน้าต่างขนาด 5x5 พิกเซล **ต้องเป็นเลขคี่เท่านั้น
+  0 = เบี่ยงเบนมาตรฐาน 
+
+thresh = cv2.threshold(blurred,60,255,cv2.THRESH_BINARY)[1]
+blurred = ภาพอินพุตที่เป็น Grayscale (และถูกเบลอแล้ว)
+60 = ถ้าพิกเซลมีค่ามากกว่า 60 → จะถูกทำให้เป็นสีขาว (255)
+255 = ค่าสีที่จะใช้ถ้าผ่าน threshold → ในที่นี้คือ 255 (สีขาว)
+cv2.THRESH_BINARY
+คือประเภทของ threshold:
+ถ้าค่า > 60 → set เป็น 255
+ถ้า ≤ 60 → set เป็น 0
+
 
 
 
