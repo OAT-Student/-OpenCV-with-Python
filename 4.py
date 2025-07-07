@@ -4,7 +4,7 @@ template = cv2.imread('1baht.jpg')
 
 h, w, _ = template.shape
 
-res = cv2.matchTemplate(img, template,cv2.TMCCOEFF_NORMED)
+res = cv2.matchTemplate(img, template,cv2.TM_CCORR)
 min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 top_left = max_loc
 bottom_right = (top_left[0]+ w, top_left[1] + h)

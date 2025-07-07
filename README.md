@@ -219,9 +219,63 @@ cv2.THRESH_BINARY
 ถ้า ≤ 60 → set เป็น 0
 
 
+// Contours หาว่าวัตุอยู่บริเวณไหน
+cnts = cv2.findContours(thresh.copy(),cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+cnts = imutils.grab_contours(cnts) # เก็บในlist
+
+thresh.copy() = สร้างไฟล์ใหม่เหมือนthresh 
+cv2.RETR_EXTERNAL = mode ในการหาcontours
+cv2.CHAIN_APPROX_SIMPLE =  mode ในการหาcontours
+imutils จะแปลงว่าของ cnts ให้user นำไปใช้งานได้ง่าย
+
+
+for c in cnts:
+    cv2.drawContours(image,[c],-1,(0,0,255),2)
+
+print contourที่ได้ ทับลงimage 
+
+# Detect Lines and Corners
+
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #เก็บในรูปของ int
+gray = np.float32(gray) #แปลงint เป็น Float โดยใช้np มาช่วย
+
+corners = cv2.goodFeaturesToTrack(gray,100,0.01,10) 
+#detect หาจุดหามุมของภาพ 
+100 = max location (เลือกจุดไม่เกิน 100 มุม)
+0.01 = ความ sensitive 
+10 = min distance ยิ่งค่ามากจะทำให้มีจุดน้อยลง
+
+corners = np.int0(corners) # แปลงเป็น int กลับคืน เพื่อนำไปใช้ต่อ
+
+for corner in corners:
+    x ,y = corners.ravel() # assignค้าx y 
+    cv2.circle(img,(x,y),3,(255,0,0),-1) # plot จุดจากค่าX y ข้างบน
 
 
 
+// line detection 
+
+canny = cv2.Canny(img, 100,200)
+100 = threshold1 แต่ละภาพไม่เหมือนกัน ต้องลองปรับดู
+200 = threshold2 แต่ละภาพไม่เหมือนกัน ต้องลองปรับดู
+
+# Face Detection (Haar Cascade) การตรวจจับภาพใบหน้า
+
+// Haar Cascade สามารถ Identity Location & identify object  สามารถ detectสิ้งที่คล้ายคลีงกันได้
+// ต้องมีmodel ให้มันใช้ 
+แหล่งรวมโมเดล : https://github.com/opencv/opencv 
 
 
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml') #ใส่โมเดลที่ได้มา
 
+gray = cv2.cvtColor(img,cv2.COLOR_BAYER_BG2BGR)  # แปลงค่าเป็น gray 
+faces = face_cascade.detectMultiScale(gray) # face_cascade = model หนึ่งตัว ,  predic detectMultiScale(gray)
+
+
+for (x , y, w,h) in faces:
+    cv2.rectangle(img,(x,y),(x+w,y+h),(255,255,0),2) #สั่งตีกรอบวัตถุ
+
+
+//ถ้าอยากสร้าง haar cascade ด้วยตัวเอง
+
+https://patorn-j.medium.com/%E0%B8%AA%E0%B8%A3%E0%B9%89%E0%B8%B2%E0%B8%87-haar-cascade-%E0%B9%84%E0%B8%A7%E0%B9%89%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%88%E0%B8%B1%E0%B8%9A%E0%B8%A7%E0%B8%B1%E0%B8%95%E0%B8%96%E0%B8%B8-%E0%B8%89%E0%B8%9A%E0%B8%B1%E0%B8%9A%E0%B8%87%E0%B9%88%E0%B8%B2%E0%B8%A2%E0%B8%A1%E0%B8%B2%E0%B8%81-%E0%B8%81-%E0%B9%84%E0%B8%81%E0%B9%88-%E0%B8%A5%E0%B9%89%E0%B8%B2%E0%B8%99%E0%B8%95%E0%B8%B1%E0%B8%A7-6a2e073a7571
